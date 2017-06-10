@@ -48,7 +48,8 @@
 </template>
 
 <script>
-  // import fs from 'fs'
+  import https from 'https'
+  import fs from 'fs'
   import path from 'path'
   export default {
     // import 'blah' from './components/blah.vue
@@ -65,22 +66,66 @@
     methods: {
       downloadAndSet (url) {
         let temp = this.$electron.remote.app.getPath('temp')
-        let options = {
-          url: url,
-          dest: path.join(temp, '/wallpaper.jpg')        // Save to /path/to/dest/photo.jpg
-        }
-        this.$Download.image(options)
-          .then(({ filename, image }) => {
-            console.log('File saved to', filename)
-            // download successful, apply to wallpaper
-            this.$Wallpaper.set(filename).then(() => {
+        // let options = {
+        //   url: url,
+        //   dest: path.join(temp, '/wallpaper.jpg')        // Save to /path/to/dest/photo.jpg
+        // }
+        // this.$Download(url).then(data => {
+        //   fs.writeFileSync(path.join(temp, '/wallpaper.jpg'), data)
+        //   this.$Wallpaper.set(data).then(() => {
+        //     this.$parent.alert = 'Wallpaper Set!'
+        //     this.$parent.toggleAlertModal()
+        //     console.log('Wallpaper Set!')
+        //   })
+        // }, (error) => {
+        //   console.log(error)
+        // })
+        // fs.unlinkSync(path.join(temp, '/wallpaper.jpg'))
+        // ---------------------
+        // this.$Download(url, path.join(temp, '/wallpaper.jpg')).then(() => {
+        //   // console.log('getting this... ', data)
+        //   this.$Wallpaper.set(path.join(temp, '/wallpaper.jpg')).then(() => {
+        //     this.$parent.alert = 'Wallpaper Set!'
+        //     this.$parent.toggleAlertModal()
+        //     console.log('Wallpaper Set!')
+        //   })
+        // }, (error) => {
+        //   console.log(error)
+        // })
+        // -----------------
+        // let download = (url, dest, cb) => {
+        let dest = path.join(temp, '/wallpaper.jpg')
+        let file = fs.createWriteStream(dest)
+        https.get(url, (response) => {
+          response.pipe(file)
+          file.on('finish', () => {
+            file.close(cb)  // close() is async, call cb after close completes.
+            this.$Wallpaper.set(path.join(temp, '/wallpaper.jpg')).then(() => {
               this.$parent.alert = 'Wallpaper Set!'
               this.$parent.toggleAlertModal()
               console.log('Wallpaper Set!')
             })
-          }).catch((err) => {
-            throw err
           })
+        }).on('error', (err) => { // Handle errors
+          fs.unlink(dest) // Delete the file async. (But we don't check the result)
+          if (cb) cb(err.message)
+        })
+        function cb (arg) {
+          console.log('finished ', arg)
+        }
+        // }
+        // this.$Download.image(options)
+        //   .then(({ filename, image }) => {
+        //     console.log('File saved to', filename)
+        //     // download successful, apply to wallpaper
+        //     this.$Wallpaper.set(filename).then(() => {
+        //       this.$parent.alert = 'Wallpaper Set!'
+        //       this.$parent.toggleAlertModal()
+        //       console.log('Wallpaper Set!')
+        //     })
+        //   }).catch((err) => {
+        //     throw err
+        //   })
       },
       updateImage () {
         this.url = ''

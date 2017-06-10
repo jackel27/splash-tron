@@ -8,8 +8,9 @@ import 'font-awesome/css/font-awesome.css'
 import VueLazyload from 'vue-lazyload'
 import anime from 'animejs'
 const wallpaper = require('wallpaper')
-const download = require('image-downloader')
-
+// const download = require('image-downloader')
+// const fs = require('fs')
+const download = require('download')
 Vue.prototype.$Download = download
 Vue.prototype.$Wallpaper = wallpaper
 Vue.prototype.$Anime = anime
