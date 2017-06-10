@@ -1,12 +1,20 @@
 <style scoped>
   .image {
+    border-radius: 5%;
     width: 23vw;
     height: 25vh;
     background-size: cover;
     background-position: center;
-    /* transform: translateX(800px); */
+    transition: all;
+    transition-duration: 400ms;
+    z-index: 4;
   }
-  .column {
+  .image:hover {
+    z-index: 99!important;
+    transform: scale(1.2);
+  }
+  .column:hover {
+    z-index: 99;
   }
   .result-container {
     /* height: 20vh; */
@@ -19,7 +27,7 @@
 <!-- animeclass = result + index -->
 <template>
   <div class="column is-3">
-    <div class="image" @click="$parent.toggleImageModal(result)" :style="{backgroundImage: 'url(' + result.urls.small + ')'}"></div>
+    <div class="image result-images" @click="$parent.toggleImageModal(result)" :style="{backgroundImage: 'url(' + result.urls.small + ')'}"></div>
   </div>
 </template>
 
@@ -38,12 +46,12 @@ export default {
     console.log('animeIndex = ', this.animeindex)
     this.$Anime({
       targets: '.result' + this.animeindex,
-      delay: this.animeindex * 200,
+      delay: this.animeindex * 50,
       translateX: [1000, 0], // Translate X from 100 to 200
       // rotate: ['.5turn', '1turn'], // Rotate from 180deg to 360deg
       // scale: ['*=2', 1], // Scale from 2 times the original value to 1,
       // backgroundColor: ['rgb(255,0,0)', '#FFF'], // Will transition the background color from red to white
-      duration: 1500
+      duration: 100
     })
     // this.$Anime({
     //   targets: '.' + this.animeclass,

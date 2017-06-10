@@ -5,22 +5,24 @@
     z-index: 99;
     right: 0vw;
     margin-top: 6%;
-    /* background-color: red; */
     display: flex;
     flex-direction: column;
   }
   .image-info {
-        position: fixed;
+    position: fixed;
     bottom: 5%;
     color: white;
     width: 100%;
     display: flex;
     justify-content: center;
   }
+  .modal {
+    z-index: 9999;
+  }
 </style>
 
 <template>
-  <div class="ImageModal">
+  <div class="ImageModal" id="img-modal">
     <div class="modal" :class="{'is-active': $parent.imageModal.opened}">
       <div class="modal-background" @click="$parent.toggleImageModal()"></div>
         <div class="image-info">
@@ -39,7 +41,7 @@
         <p class="image is-4by3">
         <!-- {{ $parent.imageModal.result.urls }} -->
            <!-- v-if="$parent.imageModal.result.urls.full" -->
-            <img v-lazy="$parent.imageModal.result.urls.full">
+            <img id="modal-img" v-lazy="$parent.imageModal.result.urls.full">
         </p>
       </div>
       <button class="modal-close" @click="$parent.toggleImageModal()"></button>
@@ -66,34 +68,6 @@
     methods: {
       downloadAndSet (url) {
         let temp = this.$electron.remote.app.getPath('temp')
-        // let options = {
-        //   url: url,
-        //   dest: path.join(temp, '/wallpaper.jpg')        // Save to /path/to/dest/photo.jpg
-        // }
-        // this.$Download(url).then(data => {
-        //   fs.writeFileSync(path.join(temp, '/wallpaper.jpg'), data)
-        //   this.$Wallpaper.set(data).then(() => {
-        //     this.$parent.alert = 'Wallpaper Set!'
-        //     this.$parent.toggleAlertModal()
-        //     console.log('Wallpaper Set!')
-        //   })
-        // }, (error) => {
-        //   console.log(error)
-        // })
-        // fs.unlinkSync(path.join(temp, '/wallpaper.jpg'))
-        // ---------------------
-        // this.$Download(url, path.join(temp, '/wallpaper.jpg')).then(() => {
-        //   // console.log('getting this... ', data)
-        //   this.$Wallpaper.set(path.join(temp, '/wallpaper.jpg')).then(() => {
-        //     this.$parent.alert = 'Wallpaper Set!'
-        //     this.$parent.toggleAlertModal()
-        //     console.log('Wallpaper Set!')
-        //   })
-        // }, (error) => {
-        //   console.log(error)
-        // })
-        // -----------------
-        // let download = (url, dest, cb) => {
         let dest = path.join(temp, '/wallpaper.jpg')
         let file = fs.createWriteStream(dest)
         https.get(url, (response) => {
@@ -113,19 +87,6 @@
         function cb (arg) {
           console.log('finished ', arg)
         }
-        // }
-        // this.$Download.image(options)
-        //   .then(({ filename, image }) => {
-        //     console.log('File saved to', filename)
-        //     // download successful, apply to wallpaper
-        //     this.$Wallpaper.set(filename).then(() => {
-        //       this.$parent.alert = 'Wallpaper Set!'
-        //       this.$parent.toggleAlertModal()
-        //       console.log('Wallpaper Set!')
-        //     })
-        //   }).catch((err) => {
-        //     throw err
-        //   })
       },
       updateImage () {
         this.url = ''

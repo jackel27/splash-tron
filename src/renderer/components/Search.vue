@@ -58,6 +58,7 @@ export default {
         this.$parent.results = response.data
         this.$parent.currentQuery = this.query
         this.$parent.maxPages = response.data.results.total_pages
+        this.$parent.page = 1
       })
       .catch((error) => {
         console.log(error)

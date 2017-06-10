@@ -19,6 +19,9 @@
   .fa-check:before {
     color: cornflowerblue;
   }
+  .modal {
+    z-index: 99999999;
+  }
 </style>
 
 <template>
