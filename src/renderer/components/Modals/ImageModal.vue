@@ -53,6 +53,9 @@
   import https from 'https'
   import fs from 'fs'
   import path from 'path'
+  import del from 'del'
+  const mkpath = require('mkpath')
+  const home = require('os').homedir()
   export default {
     // import 'blah' from './components/blah.vue
     name: 'ImageModal',
@@ -67,14 +70,15 @@
     },
     methods: {
       downloadAndSet (url) {
-        let temp = this.$electron.remote.app.getPath('temp')
-        let dest = path.join(temp, '/wallpaper.jpg')
+        del.sync([path.join(home, '/.splash-tron/*.jpg')], {force: true})
+        const dest = path.join(home, '/.splash-tron/' + Date.now() + '.jpg')
+        mkpath.sync(path.join(home, '/.splash-tron'))
         let file = fs.createWriteStream(dest)
         https.get(url, (response) => {
           response.pipe(file)
           file.on('finish', () => {
             file.close(cb)  // close() is async, call cb after close completes.
-            this.$Wallpaper.set(path.join(temp, '/wallpaper.jpg')).then(() => {
+            this.$Wallpaper.set(dest).then(() => {
               this.$parent.alert = 'Wallpaper Set!'
               this.$parent.toggleAlertModal()
               console.log('Wallpaper Set!')
